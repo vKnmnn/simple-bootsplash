@@ -1,0 +1,18 @@
+#!/bin/bash
+build() {
+##check if fbv is installed
+if [[ ! fbv ]] ; then
+    echo "fbv is not installed"
+    exit 1
+fi
+
+add_binary fbv
+add_runscript
+}
+
+help() {
+    cat<<<-HELPEOF
+    This module enables a simple bootsplash of the image contained in acpi\'s bgrt table, which can be found at \/sys\/firmware\/acpi\/bgrt\/image
+HELPEOF
+}
+

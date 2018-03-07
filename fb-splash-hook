@@ -1,0 +1,20 @@
+#!/usr/bin/ash
+
+run_earlyhook(){
+    fbv -c -d 1 /sys/firmware/acpi/bgrt/image >/dev/null 2>&1
+    cat /dev/fb0 >/fbv_image
+}
+
+run_hook(){
+    run_cleanuphook
+}
+
+run_latehook(){
+    run_cleanuphook
+}
+
+run_cleanuphook(){
+     dd if=/fbv_image of=/dev/fb0 >/dev/null 2>&1
+     #fbv -c -d 1 /sys/firmware/acpi/bgrt/image >/dev/null 2>&1
+}
+
