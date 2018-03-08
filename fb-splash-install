@@ -1,13 +1,35 @@
 #!/bin/bash
-build() {
-##check if fbv is installed
-if [[ ! fbv ]] ; then
-    echo "fbv is not installed"
-    exit 1
-fi
 
-add_binary fbv
-add_runscript
+build() {
+
+    ##check if fbv is installed
+    if [[ ! fbv ]] ; then
+        echo "fbv is not installed"
+        exit 1
+    fi
+    # check if bgrt is available
+    if [[ ! -d /sys/firmware/acpi/bgrt ]] ; then 
+        echo "bgrt not available"
+        exit 1
+    fi
+
+    impose_image(){
+        Xaxis=$(xrandr --current | grep '\*' | uniq | awk '{print $1}' | cut -d 'x' -f1)
+        Yaxis=$(xrandr --current | grep '\*' | uniq | awk '{print $1}' | cut -d 'x' -f2)
+        Xoff=$(</sys/firmware/acpi/bgrt/xoffset)
+        Yoff=$(</sys/firmware/acpi/bgrt/yoffset)
+        ##TODO add check if x is running, else get window properties in another way
+
+        convert -size ${Xaxis}x${Yaxis} xc:black -fill black -page +${Xoff}+${Yoff} "${1}" -layers flatten "${2}"
+    }
+
+    [[ -f /sys/firmware/acpi/bgrt/image ]] && impose_image /sys/firmware/acpi/bgrt/image /tmp/splash.gif
+    fbv -c -d 1 /tmp/splash.gif > /dev/null 2>&1 && cat /dev/fb0 > /tmp/fb 
+    lzop -f -9 /tmp/fb 
+
+    add_file /tmp/fb.lzo /background.fb.lzo
+    add_binary lzop
+    add_runscript
 }
 
 help() {

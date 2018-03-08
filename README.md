@@ -2,7 +2,7 @@
 displays the UEFI Logo during initramfs stage
 
 
-depends on fbv
+depends on fbv, xrandr, awk, lzop
 
 
 ## Usage
